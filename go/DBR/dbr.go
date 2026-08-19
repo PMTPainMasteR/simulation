@@ -2,7 +2,7 @@ package DBR
 
 import (
 	"fmt"
-	"myproject/utils"
+	"myproject/utils" // Ensure this matches your go.mod as discussed previously
 )
 
 type UserEquipment struct {
@@ -13,19 +13,26 @@ type UserEquipment struct {
 	be   map[float64]float64
 }
 
-func Run() {
+// Run now accepts numUEs (N) as an integer parameter
+func Run(numUEs int) {
 	B := 80.00
-	N := 4.00
+	N := float64(numUEs) // Convert to float64 for calculations
 	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
 
 	b1_val := B / N
 
-	ue1 := &UserEquipment{Name: "UE1", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
-	ue2 := &UserEquipment{Name: "UE2", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
-	ue3 := &UserEquipment{Name: "UE3", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
-	ue4 := &UserEquipment{Name: "UE4", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
-
-	ues := []*UserEquipment{ue1, ue2, ue3, ue4}
+	// Dynamically generate 'N' number of UserEquipments
+	var ues []*UserEquipment
+	for i := 1; i <= numUEs; i++ {
+		ue := &UserEquipment{
+			Name: fmt.Sprintf("UE%d", i),
+			B1:   b1_val,
+			b1:   b1_val,
+			b2:   utils.InverseTransformWifiUser(),
+			be:   make(map[float64]float64),
+		}
+		ues = append(ues, ue)
+	}
 
 	w := b1_val / B
 
@@ -51,7 +58,11 @@ func Run() {
 			ue.be[alpha] = ue.b1 + (S * w) + ue.b2
 		}
 
-		fmt.Printf("alpha: %.2f | UE1: %.2f | UE2: %.2f | UE3: %.2f | UE4: %.2f |\n",
-			alpha, ue1.be[alpha], ue2.be[alpha], ue3.be[alpha], ue4.be[alpha])
+		// Dynamically print the results for all UEs
+		fmt.Printf("alpha: %.2f | ", alpha)
+		for _, ue := range ues {
+			fmt.Printf("%s: %.2f | ", ue.Name, ue.be[alpha])
+		}
+		fmt.Println() // Print a newline at the end of the alpha iteration
 	}
 }
