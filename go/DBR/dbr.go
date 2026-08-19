@@ -1,6 +1,9 @@
 package DBR
 
-import "fmt"
+import (
+	"fmt"
+	"myproject/utils"
+)
 
 type UserEquipment struct {
 	Name string
@@ -13,15 +16,14 @@ type UserEquipment struct {
 func Run() {
 	B := 80.00
 	N := 4.00
-	wifi := 50.00
 	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
 
 	b1_val := B / N
 
-	ue1 := &UserEquipment{Name: "UE1", B1: b1_val, b1: b1_val, b2: 0.00, be: make(map[float64]float64)}
-	ue2 := &UserEquipment{Name: "UE2", B1: b1_val, b1: b1_val, b2: 0.00, be: make(map[float64]float64)}
-	ue3 := &UserEquipment{Name: "UE3", B1: b1_val, b1: b1_val, b2: wifi, be: make(map[float64]float64)}
-	ue4 := &UserEquipment{Name: "UE4", B1: b1_val, b1: b1_val, b2: wifi, be: make(map[float64]float64)}
+	ue1 := &UserEquipment{Name: "UE1", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
+	ue2 := &UserEquipment{Name: "UE2", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
+	ue3 := &UserEquipment{Name: "UE3", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
+	ue4 := &UserEquipment{Name: "UE4", B1: b1_val, b1: b1_val, b2: utils.InverseTransformWifiUser(), be: make(map[float64]float64)}
 
 	ues := []*UserEquipment{ue1, ue2, ue3, ue4}
 
