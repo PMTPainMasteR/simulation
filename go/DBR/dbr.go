@@ -10,7 +10,7 @@ type UserEquipment struct {
 	B1   float64
 	b1   float64
 	b2   float64
-	be   map[float64]float64
+	Be   map[float64]float64
 }
 
 // Run now returns the slice of alpha values and the list of UEs with their computed 'be' map
@@ -29,7 +29,7 @@ func Run(numUEs int) ([]float64, []*UserEquipment) {
 			B1:   b1_val,
 			b1:   b1_val,
 			b2:   utils.InverseTransformWifiUser(),
-			be:   make(map[float64]float64),
+			Be:   make(map[float64]float64),
 		}
 		ues = append(ues, ue)
 	}
@@ -55,16 +55,15 @@ func Run(numUEs int) ([]float64, []*UserEquipment) {
 		}
 
 		for _, ue := range ues {
-			ue.be[alpha] = ue.b1 + (S * w) + ue.b2
+			ue.Be[alpha] = ue.b1 + (S * w) + ue.b2
 		}
 
-		fmt.Printf("alpha: %.2f | ", alpha)
-		for _, ue := range ues {
-			fmt.Printf("%s: %.2f | ", ue.Name, ue.be[alpha])
-		}
-		fmt.Println()
+		// fmt.Printf("alpha: %.2f | ", alpha)
+		// for _, ue := range ues {
+		// 	fmt.Printf("%s: %.2f | ", ue.Name, ue.Be[alpha])
+		// }
+		// fmt.Println()
 	}
 
-	// Return the alphas and the populated UEs
 	return a, ues
 }
