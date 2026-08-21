@@ -1,9 +1,9 @@
 package main
 
 import (
-	"myproject/download"
+	"myproject/DOWNLOAD"
 )
 
 func main() {
-	download.SimulateDBRDownloadTime(10, 100000, 500, 50.0, 50.0)
+	DOWNLOAD.SimulateDBRDownloadTime(10, 100000, 500, 50.0, 50.0)
 }
