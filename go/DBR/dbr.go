@@ -2,7 +2,7 @@ package DBR
 
 import (
 	"fmt"
-	"myproject/utils" // Ensure this matches your go.mod as discussed previously
+	"myproject/utils" // Ensure this matches your go.mod
 )
 
 type UserEquipment struct {
@@ -13,8 +13,8 @@ type UserEquipment struct {
 	be   map[float64]float64
 }
 
-// Run now accepts numUEs (N) as an integer parameter
-func Run(numUEs int) {
+// Run now returns the slice of alpha values and the list of UEs with their computed 'be' map
+func Run(numUEs int) ([]float64, []*UserEquipment) {
 	B := 80.00
 	N := float64(numUEs) // Convert to float64 for calculations
 	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
@@ -58,11 +58,13 @@ func Run(numUEs int) {
 			ue.be[alpha] = ue.b1 + (S * w) + ue.b2
 		}
 
-		// Dynamically print the results for all UEs
 		fmt.Printf("alpha: %.2f | ", alpha)
 		for _, ue := range ues {
 			fmt.Printf("%s: %.2f | ", ue.Name, ue.be[alpha])
 		}
-		fmt.Println() // Print a newline at the end of the alpha iteration
+		fmt.Println()
 	}
+
+	// Return the alphas and the populated UEs
+	return a, ues
 }
