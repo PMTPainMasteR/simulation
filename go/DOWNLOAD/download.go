@@ -88,7 +88,7 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 
 			}
 		}
 
-		fmt.Printf("M = %-7d", numUEs)
+		fmt.Printf("N = %-7d", numUEs)
 		for _, alpha := range alphas {
 			totalTime := totalTimePerAlpha[alpha]
 			totalCount := totalUserCountPerAlpha[alpha]
