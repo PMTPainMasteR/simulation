@@ -8,43 +8,54 @@ import (
 	"strings"
 )
 
-func SimulateSingleLinkDownloadTime(fileSizeMB float64, bandwidth float64, ET0 float64, ET1 float64) float64 {
-	if bandwidth <= 0 {
+func SimulateSingleLinkDownloadTime(fileSizeMB float64, totalBandwidth float64, wifiBandwidth float64, ET0 float64, ET1 float64) float64 {
+	connectBandwidth := totalBandwidth
+	disconnectBandwidth := totalBandwidth - wifiBandwidth
+
+	if connectBandwidth <= 0 {
 		return -1
 	}
 
-	//Initial Value
-	remainingSize := fileSizeMB * 8
+	// Initial Value
+	remainingSize := fileSizeMB * 8 // Convert MB to Megabits (Mb)
 	totalTime := 0.0
 	currentState := strings.ToLower(utils.InitState(ET0, ET1))
 	var duration float64
 
-	if currentState == "disconnect" || currentState == "Disconnect" {
+	if currentState == "disconnect" {
 		currentState = "Disconnect"
 		duration = utils.InverseCDFExp(rand.Float64(), ET0)
-	}
-	if currentState == "connect" || currentState == "Connect" {
+	} else {
 		currentState = "Connect"
 		duration = utils.InverseCDFExp(rand.Float64(), ET1)
 	}
 
 	for remainingSize > 0 {
-		if currentState == "connect" || currentState == "Connect" {
-			timeToFinish := remainingSize / bandwidth
+		if currentState == "Connect" {
+			timeToFinish := remainingSize / connectBandwidth
 
 			if timeToFinish <= duration {
 				totalTime += timeToFinish
 				remainingSize = 0
 				break
 			}
-
 			totalTime += duration
-			remainingSize -= bandwidth * duration
+			remainingSize -= connectBandwidth * duration
 			currentState = "Disconnect"
 			duration = utils.InverseCDFExp(rand.Float64(), ET0)
-		}
 
-		if currentState == "disconnect" || currentState == "Disconnect" {
+		} else if currentState == "Disconnect" {
+			if disconnectBandwidth > 0 {
+				timeToFinish := remainingSize / disconnectBandwidth
+
+				if timeToFinish <= duration {
+					totalTime += timeToFinish
+					remainingSize = 0
+					break
+				}
+				remainingSize -= disconnectBandwidth * duration
+			}
+
 			totalTime += duration
 			currentState = "Connect"
 			duration = utils.InverseCDFExp(rand.Float64(), ET1)
@@ -64,7 +75,7 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 
 
 	fmt.Printf("%-10s", "Group Size")
 	for _, a := range alphas {
-		fmt.Printf(" | Alpha: %--4.2f (Avg Sec)", a)
+		fmt.Printf(" | Alpha: %-4.2f (Avg Sec)", a)
 	}
 	fmt.Println()
 	fmt.Println("-----------------------------------------------------------------------------------------")
@@ -78,9 +89,9 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 
 
 			for _, alpha := range alphaList {
 				for _, ue := range ues {
-					bandwidth := ue.Be[alpha]
-
-					ts := SimulateSingleLinkDownloadTime(fileSizeMB, bandwidth, ET0, ET1)
+					totalBandwidth := ue.Be[alpha]
+					wifiBandwidth := ue.B2
+					ts := SimulateSingleLinkDownloadTime(fileSizeMB, totalBandwidth, wifiBandwidth, ET0, ET1)
 
 					totalTimePerAlpha[alpha] += ts
 					totalUserCountPerAlpha[alpha]++
@@ -97,7 +108,7 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 
 			if totalCount > 0 {
 				avgTime = totalTime / float64(totalCount)
 			}
-			fmt.Printf(" | %20.2f", avgTime)
+			fmt.Printf(" | %-20.2f", avgTime)
 		}
 		fmt.Println()
 	}

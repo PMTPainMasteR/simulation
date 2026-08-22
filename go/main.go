@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	DOWNLOAD.SimulateDBRDownloadTime(10, 100000, 500, 50.0, 50.0)
+	DOWNLOAD.SimulateDBRDownloadTime(10, 1000, 500, 100.0, 50.0)
 }

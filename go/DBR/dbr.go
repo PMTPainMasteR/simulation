@@ -9,7 +9,7 @@ type UserEquipment struct {
 	Name string
 	B1   float64
 	b1   float64
-	b2   float64
+	B2   float64
 	Be   map[float64]float64
 }
 
@@ -28,7 +28,7 @@ func Run(numUEs int) ([]float64, []*UserEquipment) {
 			Name: fmt.Sprintf("UE%d", i),
 			B1:   b1_val,
 			b1:   b1_val,
-			b2:   utils.InverseTransformWifiUser(),
+			B2:   utils.InverseTransformWifiUser(),
 			Be:   make(map[float64]float64),
 		}
 		ues = append(ues, ue)
@@ -45,17 +45,17 @@ func Run(numUEs int) ([]float64, []*UserEquipment) {
 		}
 
 		for _, ue := range ues {
-			if ue.b1 <= ue.b2 {
+			if ue.b1 <= ue.B2 {
 				ue.b1 = ue.B1 * (1 - alpha)
 				S += (ue.B1 * alpha)
 			} else {
-				ue.b1 = ue.B1 - (ue.b2 * alpha)
-				S += (ue.b2 * alpha)
+				ue.b1 = ue.B1 - (ue.B2 * alpha)
+				S += (ue.B2 * alpha)
 			}
 		}
 
 		for _, ue := range ues {
-			ue.Be[alpha] = ue.b1 + (S * w) + ue.b2
+			ue.Be[alpha] = ue.b1 + (S * w) + ue.B2
 		}
 
 		// fmt.Printf("alpha: %.2f | ", alpha)
