@@ -19,6 +19,10 @@ func InverseCDFExp(u float64, val float64) float64 {
 	return (-val) * math.Log(1-u)
 }
 
+func InverseCDFExpLambda(u float64, lambda float64) float64 {
+	return -(1 / lambda) * math.Log(1-u)
+}
+
 func InitState(ET0 float64, ET1 float64) string {
 	u := rand.Float64()
 	P0 := ET0 / (ET0 + ET1)

@@ -2,7 +2,7 @@ package DBR
 
 import (
 	"fmt"
-	"myproject/utils" // Ensure this matches your go.mod
+	"myproject/utils"
 )
 
 type UserEquipment struct {
@@ -16,7 +16,7 @@ type UserEquipment struct {
 // Run now returns the slice of alpha values and the list of UEs with their computed 'be' map
 func Run(numUEs int) ([]float64, []*UserEquipment) {
 	B := 80.00
-	N := float64(numUEs) // Convert to float64 for calculations
+	N := float64(numUEs)
 	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
 
 	b1_val := B / N
