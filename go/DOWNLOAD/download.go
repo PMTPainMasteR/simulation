@@ -65,12 +65,13 @@ func SimulateSingleLinkDownloadTime(fileSizeMB float64, totalBandwidth float64, 
 	return totalTime
 }
 
-func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 float64, ET1 float64) {
+// Added totalB float64 to the parameters to dynamically pass to DBR
+func SimulateDBRDownloadTime(maxUEs int, iteration int, totalB float64, fileSizeMB float64, ET0 float64, ET1 float64) {
 	alphas := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
 
 	fmt.Println("=========================================================================================")
-	fmt.Printf("Simulation Settings: Filesize = %.2f MB | ET0 = %.2fs | ET1 = %.2fs | Iterations = %d\n",
-		fileSizeMB, ET0, ET1, iteration)
+	fmt.Printf("Simulation Settings: Filesize = %.2f MB | Total BW = %.2f | ET0 = %.2fs | ET1 = %.2fs | Iterations = %d\n",
+		fileSizeMB, totalB, ET0, ET1, iteration)
 	fmt.Println("=========================================================================================")
 
 	fmt.Printf("%-10s", "Group Size")
@@ -85,7 +86,8 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, fileSizeMB float64, ET0 
 		totalUserCountPerAlpha := make(map[float64]int)
 
 		for i := 0; i < iteration; i++ {
-			alphaList, ues := DBR.Run(numUEs)
+			// Pass totalB dynamically into DBR.Run
+			alphaList, ues := DBR.Run(numUEs, totalB)
 
 			for _, alpha := range alphaList {
 				for _, ue := range ues {

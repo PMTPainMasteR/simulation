@@ -13,9 +13,8 @@ type UserEquipment struct {
 	Be   map[float64]float64
 }
 
-// Run now returns the slice of alpha values and the list of UEs with their computed 'be' map
-func Run(numUEs int) ([]float64, []*UserEquipment) {
-	B := 80.00
+// Run now accepts total bandwidth (B) as a dynamic parameter
+func Run(numUEs int, B float64) ([]float64, []*UserEquipment) {
 	N := float64(numUEs)
 	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
 
@@ -57,12 +56,6 @@ func Run(numUEs int) ([]float64, []*UserEquipment) {
 		for _, ue := range ues {
 			ue.Be[alpha] = ue.b1 + (S * w) + ue.B2
 		}
-
-		// fmt.Printf("alpha: %.2f | ", alpha)
-		// for _, ue := range ues {
-		// 	fmt.Printf("%s: %.2f | ", ue.Name, ue.Be[alpha])
-		// }
-		// fmt.Println()
 	}
 
 	return a, ues
