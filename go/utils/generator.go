@@ -8,8 +8,8 @@ import (
 func InverseTransformWifiUser() float64 {
 	u := rand.Float64()
 	wifi := 0.0
-	if u <= 0.5 {
-		wifi = 50.0
+	if u <= 0.685 {
+		wifi = 60.0
 		return wifi
 	}
 	return wifi
@@ -17,10 +17,6 @@ func InverseTransformWifiUser() float64 {
 
 func InverseCDFExp(u float64, val float64) float64 {
 	return (-val) * math.Log(1-u)
-}
-
-func InverseCDFExpLambda(u float64, lambda float64) float64 {
-	return -(1 / lambda) * math.Log(1-u)
 }
 
 func InitState(ET0 float64, ET1 float64) string {

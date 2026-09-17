@@ -86,12 +86,19 @@ func SimulateDBRDownloadTime(maxUEs int, iteration int, totalB float64, fileSize
 		totalUserCountPerAlpha := make(map[float64]int)
 
 		for i := 0; i < iteration; i++ {
-			// Pass totalB dynamically into DBR.Run
-			alphaList, ues := DBR.Run(numUEs, totalB)
 
-			for _, alpha := range alphaList {
+			// Generate dummy Wi-Fi capacities to satisfy the new Run signature
+			b2s := make([]float64, numUEs)
+			for j := 0; j < numUEs; j++ {
+				b2s[j] = utils.InverseTransformWifiUser()
+			}
+
+			for _, alpha := range alphas {
+				// Pass the Wi-Fi array, totalB, and specific alpha dynamically into DBR.Run
+				ues := DBR.Run(b2s, totalB, alpha)
+
 				for _, ue := range ues {
-					totalBandwidth := ue.Be[alpha]
+					totalBandwidth := ue.Be
 					wifiBandwidth := ue.B2
 					ts := SimulateSingleLinkDownloadTime(fileSizeMB, totalBandwidth, wifiBandwidth, ET0, ET1)
 

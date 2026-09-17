@@ -2,7 +2,6 @@ package DBR
 
 import (
 	"fmt"
-	"myproject/utils"
 )
 
 type UserEquipment struct {
@@ -10,53 +9,54 @@ type UserEquipment struct {
 	B1   float64
 	b1   float64
 	B2   float64
-	Be   map[float64]float64
+	Be   float64 // Simplified to a single float64 for the specific alpha
 }
 
-// Run now accepts total bandwidth (B) as a dynamic parameter
-func Run(numUEs int, B float64) ([]float64, []*UserEquipment) {
+// Run distributes the bandwidth dynamically based on the actual active Wi-Fi states and a specific alpha.
+func Run(activeB2s []float64, B float64, alpha float64) []*UserEquipment {
+	numUEs := len(activeB2s)
 	N := float64(numUEs)
-	a := []float64{0.00, 0.25, 0.50, 0.75, 1.00}
+
+	// Safety check for empty slices
+	if N == 0 {
+		return nil
+	}
 
 	b1_val := B / N
 
-	// Dynamically generate 'N' number of UserEquipments
 	var ues []*UserEquipment
-	for i := 1; i <= numUEs; i++ {
+	for i := 0; i < numUEs; i++ {
 		ue := &UserEquipment{
-			Name: fmt.Sprintf("UE%d", i),
+			Name: fmt.Sprintf("UE%d", i+1),
 			B1:   b1_val,
 			b1:   b1_val,
-			B2:   utils.InverseTransformWifiUser(),
-			Be:   make(map[float64]float64),
+			B2:   activeB2s[i],
 		}
 		ues = append(ues, ue)
 	}
 
 	w := b1_val / B
+	S := 0.00
 
-	for k := 0; k < len(a); k++ {
-		alpha := a[k]
-		S := 0.00
+	for _, ue := range ues {
+		ue.b1 = ue.B1
+	}
 
-		for _, ue := range ues {
-			ue.b1 = ue.B1
-		}
-
-		for _, ue := range ues {
-			if ue.b1 <= ue.B2 {
-				ue.b1 = ue.B1 * (1 - alpha)
-				S += (ue.B1 * alpha)
-			} else {
-				ue.b1 = ue.B1 - (ue.B2 * alpha)
-				S += (ue.B2 * alpha)
-			}
-		}
-
-		for _, ue := range ues {
-			ue.Be[alpha] = ue.b1 + (S * w) + ue.B2
+	// Reclaim bandwidth based on the fed alpha
+	for _, ue := range ues {
+		if ue.b1 <= ue.B2 {
+			ue.b1 = ue.B1 * (1 - alpha)
+			S += (ue.B1 * alpha)
+		} else {
+			ue.b1 = ue.B1 - (ue.B2 * alpha)
+			S += (ue.B2 * alpha)
 		}
 	}
 
-	return a, ues
+	// Redistribute the shared pool
+	for _, ue := range ues {
+		ue.Be = ue.b1 + (S * w) + ue.B2
+	}
+
+	return ues
 }
