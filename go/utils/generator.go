@@ -1,3 +1,4 @@
+// generator.go
 package utils
 
 import (
@@ -27,4 +28,10 @@ func InitState(ET0 float64, ET1 float64) string {
 		return "disconnect"
 	}
 	return "connect"
+}
+
+func GenerateParetoFileSize(shape float64, meanMB float64) float64 {
+	xm := meanMB * (shape - 1.0) / shape
+	u := rand.Float64()
+	return xm / math.Pow(1.0-u, 1.0/shape)
 }
